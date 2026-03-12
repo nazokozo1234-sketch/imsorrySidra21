@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>I'm Sorry Sidra :(</title>
+<style>
+body {
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  background-color:#ffd6dc;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.strawberry-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.strawberry {
+  position: absolute;
+  width: 70px; 
+  height: 70px;
+  background-image: url('strawberry.png'); /* your local strawberry image */
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: rotate(-25deg);
+  animation: tilt 3s infinite alternate ease-in-out;
+}
+
+@keyframes tilt{
+  0%{ transform: rotate(-50deg); }
+  50%{ transform: rotate(0deg); }
+  100%{ transform: rotate(50deg); }
+}
+
+.card{
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.emoji{
+  font-size:120px;
+  animation:cry 1s infinite;
+}
+
+@keyframes cry{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(6px);}
+  100%{transform:translateY(0);}
+}
+
+.sign{
+  background:white;
+  padding:12px 22px;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:26px;
+  font-weight:bold;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+button{
+  padding:10px 18px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin:5px;
+}
+
+#yes{
+  background:#7cff8a;
+  position: fixed;
+  top: 60%;
+  left: 38%;
+  z-index: 2;
+}
+
+#no{
+  background:#ff7c7c;
+  position: fixed;
+  top: 60%;
+  left: 55%;
+  z-index: 2;
+}
+
+.heart{
+  position:absolute;
+  font-size:24px;
+  color:#ff4d6d;
+  pointer-events:none;
+  animation:float 2s linear forwards;
+}
+
+@keyframes float{
+  0%{transform:translateY(0) scale(1);}
+  100%{transform:translateY(-200px) scale(1.5); opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="strawberry-container" id="strawberries"></div>
+
+<div class="card">
+  <div class="emoji">😭</div>
+  <div class="sign">I'm sorry Sidra :(</div>
+  <button id="yes">Forgive me?</button>
+  <button id="no">No</button>
+</div>
+
+<script>
+const noButton = document.getElementById("no");
+const yesButton = document.getElementById("yes");
+const container = document.getElementById('strawberries');
+const strawberrySize = 70; // size of each strawberry
+const spacingX = strawberrySize * 1.5;
+const spacingY = strawberrySize * 1.5;
+
+function fillStrawberries() {
+  container.innerHTML = '';
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+
+  // calculate number of rows and cols with extra for coverage
+  const cols = Math.ceil(windowWidth / spacingX) + 4;
+  const rows = Math.ceil(windowHeight / spacingY) + 4;
+
+  // total width of diagonal grid
+  const gridWidth = cols * spacingX + rows * (spacingX/2);
+
+  // horizontal offset to center the grid
+  const offsetX = -((gridWidth - windowWidth)/2);
+  const offsetY = -spacingY; // start slightly above viewport
+
+  for(let r=0; r<rows; r++){
+    for(let c=0; c<cols; c++){
+      const s = document.createElement('div');
+      s.className = 'strawberry';
+      s.style.top = offsetY + r*spacingY + 'px';
+      s.style.left = offsetX + c*spacingX + r*(spacingX/2) + 'px';
+      s.style.animationDelay = Math.random()*2 + 's';
+      container.appendChild(s);
+    }
+  }
+}
+
+// initially fill
+fillStrawberries();
+
+// refill on resize
+window.addEventListener('resize', fillStrawberries);
+
+// move No button
+function moveNoButton(x,y){
+  const rect = noButton.getBoundingClientRect();
+  const dx = Math.abs(x - rect.left - rect.width/2);
+  const dy = Math.abs(y - rect.top - rect.height/2);
+  if(dx<100 && dy<100){
+    const newX = Math.random()*(window.innerWidth - rect.width);
+    const newY = Math.random()*(window.innerHeight - rect.height);
+    noButton.style.left = newX + 'px';
+    noButton.style.top = newY + 'px';
+  }
+}
+
+document.addEventListener('mousemove', e => moveNoButton(e.clientX,e.clientY));
+document.addEventListener('touchmove', e => {
+  if(e.touches.length>0) moveNoButton(e.touches[0].clientX,e.touches[0].clientY);
+});
+
+// yes button hearts
+yesButton.onclick = function(){
+  alert("Thank you for forgiving me Sidra ❤️");
+  for(let i=0;i<15;i++) createHeart();
+};
+
+function createHeart(){
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+  heart.style.left = Math.random()*window.innerWidth + "px";
+  heart.style.top = window.innerHeight + "px";
+  heart.style.fontSize = (12+Math.random()*18) + "px";
+  heart.style.animationDuration = (2+Math.random()*1.5) + "s";
+  heart.textContent = "💖";
+  document.body.appendChild(heart);
+  setTimeout(()=> heart.remove(),3000);
+}
+</script>
+</body>
+</html>
